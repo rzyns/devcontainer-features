@@ -1,0 +1,14 @@
+{
+    "ubuntu": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "mise": {}
+        }
+    },
+    "debian": {
+        "image": "mcr.microsoft.com/devcontainers/base:focal",
+        "features": {
+            "mise": {}
+        }
+    }
+}

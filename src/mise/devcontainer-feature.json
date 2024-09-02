@@ -1,0 +1,10 @@
+{
+    "name": "mise",
+    "id": "mise",
+    "version": "1.0.0",
+    "description": "Use mise (with ubi)",
+    "options": {},
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}
