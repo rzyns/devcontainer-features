@@ -17,15 +17,16 @@
             "mise": "latest"
         }
     },
-    "activate": {
-        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "activate_on": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
         "features": {
             "mise": {
                 "activate": true
             }
-        }
+        },
+        "postCreateCommand": "bash -l -c 'MISE_EXPERIMENTAL=1 mise use -g ubi:eza-community/eza'"
     },
-    "no_activate": {
+    "activate_off": {
         "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
         "features": {
             "mise": {
