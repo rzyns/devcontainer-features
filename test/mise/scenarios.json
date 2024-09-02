@@ -6,7 +6,7 @@
         }
     },
     "debian": {
-        "image": "mcr.microsoft.com/devcontainers/base:focal",
+        "image": "mcr.microsoft.com/devcontainers/base:bookworm",
         "features": {
             "mise": {}
         }
@@ -16,5 +16,22 @@
         "features": {
             "mise": "latest"
         }
+    },
+    "activate": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "mise": {
+                "activate": true
+            }
+        }
+    },
+    "no_activate": {
+        "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+        "features": {
+            "mise": {
+                "activate": false
+            }
+        }
     }
+
 }

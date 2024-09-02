@@ -3,7 +3,13 @@
     "id": "mise",
     "version": "1.1.0",
     "description": "Use mise (with ubi)",
-    "options": {},
+    "options": {
+        "activate": {
+            "default": false,
+            "description": "Add 'mise activate' to shell startup files",
+            "type": "boolean"
+        }
+    },
     "installsAfter": [
         "ghcr.io/devcontainers/features/common-utils"
     ]

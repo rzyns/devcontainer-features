@@ -3,7 +3,7 @@ set -e
 
 . /etc/os-release
 
-if [ "${ID}" -ne "debian" ] && [ "${ID}" -ne "ubuntu" ]; then
+if [ "${ID}" != "debian" ] && [ "${ID}" != "ubuntu" ]; then
 	print_error "Unsupported  distribution '${ID}'. To resolve, choose a compatible OS distribution (debian, ubuntu)"
 	exit 1
 fi
@@ -81,7 +81,7 @@ else
     URL="https://github.com/houseabsolute/ubi/releases/download/$TAG/$FILENAME"
 fi
 
-TEMPDIR=$(mktemp -d)
+TEMPDIR="$(mktemp -d)"
 trap 'rm -rf -- "$TEMPDIR"' EXIT
 LOCAL_FILE="$TEMPDIR/$FILENAME"
 
@@ -102,3 +102,10 @@ else
 fi
 
 rm -rf -- "$TEMPDIR"
+
+if [ "${ACTIVATE}" = "true" ]; then
+	/usr/bin/echo -e '\neval "$(mise hook-env --shell bash)"' >> /etc/profile
+	/usr/bin/echo -e '\neval "$(mise activate bash)"' >> /etc/bash.bashrc
+	# [ -e /etc/zsh ] && echo -e '\neval "$(mise hook-env --shell zsh)"' >> /etc/zsh/zshenv
+	# [ -e /etc/zsh ] && echo -e '\neval "$(mise activate zsh)"' >> /etc/zsh/zshrc
+fi
