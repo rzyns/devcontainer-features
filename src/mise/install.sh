@@ -104,9 +104,18 @@ fi
 rm -rf -- "$TEMPDIR"
 
 if [ "${ACTIVATE}" = "true" ]; then
+	echo "Setting up 'mise activate'..."
+
+	echo -n "    - bash..."
 	/usr/bin/echo -e '\neval "$(mise env --shell bash)"' > /etc/profile.d/10-mise.sh
 	chmod a+x /etc/profile.d/10-mise.sh
 	/usr/bin/echo -e '\neval "$(mise activate bash)"' >> /etc/bash.bashrc
-	# [ -e /etc/zsh ] && echo -e '\neval "$(mise hook-env --shell zsh)"' >> /etc/zsh/zshenv
-	# [ -e /etc/zsh ] && echo -e '\neval "$(mise activate zsh)"' >> /etc/zsh/zshrc
+	echo "done"
+
+	if [ -e /etc/zsh ]; then
+		echo -n "    - zsh..."
+		/usr/bin/echo -e '\neval "$(mise hook-env --shell zsh)"' >> /etc/zsh/zshenv
+		/usr/bin/echo -e '\neval "$(mise activate zsh)"' >> /etc/zsh/zshrc
+		echo "done"
+	fi
 fi

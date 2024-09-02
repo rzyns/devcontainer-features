@@ -17,12 +17,25 @@
             "mise": "latest"
         }
     },
-    "activate_on": {
+    "activate_on-bash": {
         "image": "mcr.microsoft.com/devcontainers/base:noble",
         "features": {
             "mise": {
                 "activate": true
             }
+        },
+        "postCreateCommand": "bash -l -c 'MISE_EXPERIMENTAL=1 mise use -g ubi:eza-community/eza'"
+    },
+    "activate_on-zsh": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "mise": {
+                "activate": true
+            },
+            "ghcr.io/devcontainers/features/common-utils": {
+                "installZsh": true
+            }
+
         },
         "postCreateCommand": "bash -l -c 'MISE_EXPERIMENTAL=1 mise use -g ubi:eza-community/eza'"
     },
