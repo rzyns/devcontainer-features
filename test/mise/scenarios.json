@@ -10,5 +10,11 @@
         "features": {
             "mise": {}
         }
+    },
+    "ubi": {
+        "image": "mcr.microsoft.com/devcontainers/base:noble",
+        "features": {
+            "mise": "latest"
+        }
     }
 }

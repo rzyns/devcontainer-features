@@ -25,14 +25,80 @@ else
 	rm ./install.sh
 fi
 
-# The 'install.sh' entrypoint script is always executed as the root user.
-#
-# These following environment variables are passed in by the dev container CLI.
-# These may be useful in instances where the context of the final 
-# remoteUser or containerUser is useful.
-# For more details, see https://containers.dev/implementors/features#user-env-var
-echo "The effective dev container remoteUser is '$_REMOTE_USER'"
-echo "The effective dev container remoteUser's home directory is '$_REMOTE_USER_HOME'"
 
-echo "The effective dev container containerUser is '$_CONTAINER_USER'"
-echo "The effective dev container containerUser's home directory is '$_CONTAINER_USER_HOME'"
+# The following was adapted from https://github.com/houseabsolute/ubi/blob/af9a0b237b303d91e74519130b28f697a46d5a1f/bootstrap/bootstrap-ubi.sh
+
+if [ -n "$UBI_DEBUG_BOOTSTRAP" ]; then
+    set -x
+fi
+
+set -e
+
+if [ "$(id -u)" -eq 0 ]; then
+    TARGET="/usr/local/bin"
+else
+    TARGET="$HOME/.local/bin"
+	mkdir -p "${TARGET}"
+fi
+
+if [ ! -d "$TARGET" ]; then
+    >&2 echo "ubi: The install target directory, \`$TARGET\`, does not exist"
+    exit 3
+fi
+
+cd "$TARGET"
+
+KERNEL=$(uname -s)
+LIBC="-musl"
+EXT="tar.gz"
+OS="Linux"
+ARCH=$(uname -m)
+
+case "$ARCH" in
+i386 | i486 | i586 | i686)
+	CPU="i786"
+	;;
+x86_64 | amd64)
+	CPU="x86_64"
+	;;
+arm | armv5* | armv6* | armv7*)
+	CPU="arm"
+	;;
+aarch64 | arm64)
+	CPU="aarch64"
+	;;
+*)
+	echo "ubi: Cannot determine what binary to download for your CPU architecture: $ARCH"
+	exit 4
+	;;
+esac
+
+FILENAME="ubi-$OS-$CPU$LIBC.$EXT"
+
+if [ -z "$TAG" ]; then
+    URL="https://github.com/houseabsolute/ubi/releases/latest/download/$FILENAME"
+else
+    URL="https://github.com/houseabsolute/ubi/releases/download/$TAG/$FILENAME"
+fi
+
+TEMPDIR=$(mktemp -d)
+trap 'rm -rf -- "$TEMPDIR"' EXIT
+LOCAL_FILE="$TEMPDIR/$FILENAME"
+
+echo "downloading $URL"
+STATUS=$(curl --silent --show-error --location --output "$LOCAL_FILE" --write-out "%{http_code}" "$URL")
+if [ -z "$STATUS" ]; then
+    >&2 echo "curl failed to download $URL and did not print a status code"
+    exit 5
+elif [ "$STATUS" != "200" ]; then
+    >&2 echo "curl failed to download $URL - status code = $STATUS"
+    exit 6
+fi
+
+if echo "$FILENAME" | grep "\\.tar\\.gz$"; then
+    tar -xzf "$LOCAL_FILE" ubi
+else
+    unzip "$LOCAL_FILE"
+fi
+
+rm -rf -- "$TEMPDIR"
