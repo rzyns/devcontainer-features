@@ -15,7 +15,8 @@ Use mise (with ubi)
 
 | Options Id | Description | Type | Default Value |
 |-----|-----|-----|-----|
-
+| activate | Add 'mise activate' to shell startup files | boolean | true |
+| installWorkspacePackages | run mise install -y | boolean | true |
 
 
 
