@@ -46,6 +46,25 @@
                 "activate": false
             }
         }
+    },
+    "install_on": {
+        "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+        "features": {
+            "mise": {
+                "activate": true,
+                "installWorkspacePackages": true
+            }
+        },
+        "initializeCommand": "/usr/bin/echo -e '[tools]\\n\"ubi:eza-community/eza\" = \"latest\"' > .mise.toml"
+    },
+    "install_off": {
+        "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+        "features": {
+            "mise": {
+                "activate": true,
+                "installWorkspacePackages": false
+            }
+        },
+        "initializeCommand": "/usr/bin/echo -e '[tools]\\n\"ubi:eza-community/eza\" = \"latest\"' > .mise.toml"
     }
-
 }

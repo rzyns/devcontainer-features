@@ -11,7 +11,7 @@ fi
 echo "Activating feature 'mise'"
 
 if [ "$(id -u)" -eq 0 ]; then
-	apt-get update -y && apt-get install -y gpg wget curl
+	apt-get update -y && apt-get install -y gpg wget curl sudo
 	install -dm 755 /etc/apt/keyrings
 	wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | tee /etc/apt/keyrings/mise-archive-keyring.gpg 1> /dev/null
 	echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | tee /etc/apt/sources.list.d/mise.list
@@ -103,19 +103,32 @@ fi
 
 rm -rf -- "$TEMPDIR"
 
+
+if [ "${INSTALLWORKSPACEPACKAGES}" = "true" ]; then
+	/usr/bin/echo -e 'export __MISE_INSTALL_WORKSPACE_PACKAGES=1' > /etc/profile.d/05-mise-install-workspace-packages.sh
+fi
+
 if [ "${ACTIVATE}" = "true" ]; then
 	echo "Setting up 'mise activate'..."
 
 	echo -n "    - bash..."
 	/usr/bin/echo -e '\neval "$(mise env --shell bash)"' > /etc/profile.d/10-mise.sh
 	chmod a+x /etc/profile.d/10-mise.sh
-	/usr/bin/echo -e '\neval "$(mise activate bash)"' >> /etc/bash.bashrc
+
+	if ! grep 'mise activate bash' /etc/bash.bashrc ; then
+		/usr/bin/echo -e '\neval "$(mise activate bash)"' >> /etc/bash.bashrc
+	fi
+
 	echo "done"
 
 	if [ -e /etc/zsh ]; then
 		echo -n "    - zsh..."
-		/usr/bin/echo -e '\neval "$(mise hook-env --shell zsh)"' >> /etc/zsh/zshenv
-		/usr/bin/echo -e '\neval "$(mise activate zsh)"' >> /etc/zsh/zshrc
+		if ! grep 'mise hook-env' /etc/zsh/zshenv ; then
+			/usr/bin/echo -e '\neval "$(mise hook-env --shell zsh)"' >> /etc/zsh/zshenv
+		fi
+		if ! grep 'mise activate zsh' /etc/zsh/zshrc ; then
+			/usr/bin/echo -e '\neval "$(mise activate zsh)"' >> /etc/zsh/zshrc
+		fi
 		echo "done"
 	fi
 fi
