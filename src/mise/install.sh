@@ -106,6 +106,9 @@ rm -rf -- "$TEMPDIR"
 
 if [ "${INSTALLWORKSPACEPACKAGES}" = "true" ]; then
 	/usr/bin/echo -e 'export __MISE_INSTALL_WORKSPACE_PACKAGES=1' > /etc/profile.d/05-mise-install-workspace-packages.sh
+	if [ -e /etc/zsh ] && ! grep '__MISE_INSTALL_WORKSPACE_PACKAGES' /etc/zsh/zshenv ; then
+		/usr/bin/echo -e 'export __MISE_INSTALL_WORKSPACE_PACKAGES=1' >> /etc/zsh/zshenv
+	fi
 fi
 
 if [ "${ACTIVATE}" = "true" ]; then
